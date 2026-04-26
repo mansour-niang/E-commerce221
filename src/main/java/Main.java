@@ -1,10 +1,21 @@
-package catalogue;
-
+import catalogue.Money;
+import catalogue.Product;
+import catalogue.SKU;
 import catalogue.exceptions.InvalidCurrencyException;
 import catalogue.exceptions.InvalidDiscountException;
 import catalogue.exceptions.InvalidSkuException;
+import contracts.UserRepository;
+import data.SampleData;
+import exercices.niveau1.Niveau1Exercises;
+import exercices.niveau2.Niveau2Exercises;
+import exercices.niveau3.Niveau3Exercises;
+import exercices.niveau4.Niveau4Exercises;
+import model.Transaction;
+import model.User;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Classe de démonstration.
@@ -164,6 +175,36 @@ public class Main {
         System.out.println("═══════════════════════════════════════════════════════");
         System.out.println("  TOUS LES GARDES-FOUS FONCTIONNENT CORRECTEMENT ✅");
         System.out.println("═══════════════════════════════════════════════════════");
+
+        System.out.println("=== Séance 2 : Programmation Fonctionnelle & API Stream ===");
+        System.out.println("Arguments reçus : " + args.length);
+
+        UserRepository repository = id -> SampleData.users().stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst();
+
+        print("Niveau 1_Ex1", Niveau1Exercises.isPositive().test(5));
+        Niveau1Exercises.logger().accept("Niveau 1_Ex2 - démo du logger");
+        print("Niveau 1_Ex3", Niveau1Exercises.doubleValue().apply("10"));
+        print("Niveau 1_Ex4", Niveau1Exercises.interestRateSupplier().get());
+        print("Niveau 1_Ex5", Niveau1Exercises.emailValidator().validate("user@example.com"));
+
+        print("Niveau 2_Ex6", Niveau2Exercises.filterFruitsStartingWithA(SampleData.fruits()));
+        print("Niveau 2_Ex7", Niveau2Exercises.extractEmails(SampleData.users()));
+        print("Niveau 2_Ex8", Niveau2Exercises.sumPricesAbove100(SampleData.prices()));
+        print("Niveau 2_Ex9", Niveau2Exercises.uniqueSortedNames(SampleData.names()));
+        print("Niveau 2_Ex10", Niveau2Exercises.findAdmin(SampleData.users()));
+
+        print("Niveau 3_Ex11", Niveau3Exercises.groupTransactionsByCurrency(SampleData.transactions()));
+        print("Niveau 3_Ex12", Niveau3Exercises.summarizeProducts(SampleData.products()));
+        print("Niveau 3_Ex13", Niveau3Exercises.partitionStudentsByAverage(SampleData.students()));
+        print("Niveau 3_Ex14", Niveau3Exercises.collectAllUniqueItems(SampleData.orders()));
+        print("Niveau 3_Ex15", Niveau3Exercises.resolveStreet(new User("4", "demo@example.com", "USER", null)));
+
+        Predicate<Transaction> complexValidator = Niveau4Exercises.complexValidator();
+        print("Niveau 4_Ex16", complexValidator.test(SampleData.transactions().get(2)));
+        print("Niveau 4_Ex17", Niveau4Exercises.existingUsers(SampleData.ids(), repository));
+        print("Niveau 4_Ex18", Niveau4Exercises.importEmployees(SampleData.csvLines()));
     }
 
     /**
@@ -179,5 +220,9 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("✅ [BLOQUÉ] " + description + " → " + e.getMessage());
         }
+    }
+
+    private static void print(String label, Object value) {
+        System.out.println(label + " : " + value);
     }
 }
