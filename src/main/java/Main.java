@@ -15,6 +15,7 @@ import model.User;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
@@ -205,6 +206,62 @@ public class Main {
         print("Niveau 4_Ex16", complexValidator.test(SampleData.transactions().get(2)));
         print("Niveau 4_Ex17", Niveau4Exercises.existingUsers(SampleData.ids(), repository));
         print("Niveau 4_Ex18", Niveau4Exercises.importEmployees(SampleData.csvLines()));
+
+        // ────────────────────────────────────────────────────────────────────────
+        // DAKAR-TECH WALLET : démonstration du noyau domaine (Value Objects + Entity)
+        // ────────────────────────────────────────────────────────────────────────
+        System.out.println();
+        System.out.println("=== DAKAR-TECH WALLET (Domain) : démonstration & tests ===");
+
+        // Scénario normal : création de comptes et opérations métier
+        dakar_tech_wallet.Account compteA = new dakar_tech_wallet.Account(UUID.randomUUID(), new dakar_tech_wallet.PhoneNumber("771112233"), new dakar_tech_wallet.Money(new BigDecimal("20000"), "FCFA"));
+        dakar_tech_wallet.Account compteB = new dakar_tech_wallet.Account(UUID.randomUUID(), new dakar_tech_wallet.PhoneNumber("+221781234567"), new dakar_tech_wallet.Money(new BigDecimal("10000"), "FCFA"));
+
+        System.out.println("-- Scénario normal : opérations entre comptes --");
+        print("Compte A initial", compteA.getBalance());
+        print("Compte B initial", compteB.getBalance());
+
+        // créditer A de 5 000 FCFA
+        compteA.crediter(new dakar_tech_wallet.Money(new BigDecimal("5000"), "FCFA"));
+        print("Compte A après crédit 5000", compteA.getBalance());
+
+        // débiter B de 2 000 FCFA
+        compteB.debiter(new dakar_tech_wallet.Money(new BigDecimal("2000"), "FCFA"));
+        print("Compte B après débit 2000", compteB.getBalance());
+
+        // transfert A -> B de 7 000 FCFA
+        compteA.transfererVers(compteB, new dakar_tech_wallet.Money(new BigDecimal("7000"), "FCFA"));
+        print("Compte A après transfert 7000", compteA.getBalance());
+        print("Compte B après réception", compteB.getBalance());
+
+        // Tests de robustesse (doivent échouer)
+        tester("Wallet: Money negatif", () -> {
+                dakar_tech_wallet.Money m = new dakar_tech_wallet.Money(new BigDecimal("-100"), "FCFA");
+                print("Montant tente", m);
+        });
+
+        tester("Wallet: transfert devises différentes", () -> {
+            dakar_tech_wallet.Account compteFcfa = new dakar_tech_wallet.Account(UUID.randomUUID(), new dakar_tech_wallet.PhoneNumber("+221771234567"), new dakar_tech_wallet.Money(new BigDecimal("10000"), "FCFA"));
+            dakar_tech_wallet.Account compteEur  = new dakar_tech_wallet.Account(UUID.randomUUID(), new dakar_tech_wallet.PhoneNumber("776543210"), new dakar_tech_wallet.Money(new BigDecimal("2000"), "EUR"));
+            dakar_tech_wallet.Money montantTente = new dakar_tech_wallet.Money(new BigDecimal("1000"), "EUR");
+            print("Compte source avant transfert", compteFcfa.getBalance());
+            print("Compte destinataire avant transfert", compteEur.getBalance());
+            print("Montant tente", montantTente);
+            compteFcfa.transfererVers(compteEur, montantTente);
+            // si jamais le transfert passe (ce ne devrait pas être le cas), afficher les soldes
+            print("Compte source apres transfert", compteFcfa.getBalance());
+            print("Compte destinataire apres transfert", compteEur.getBalance());
+        });
+
+        tester("Wallet: débit supérieur au solde", () -> {
+            dakar_tech_wallet.Account petitCompte = new dakar_tech_wallet.Account(UUID.randomUUID(), new dakar_tech_wallet.PhoneNumber("771234567"), new dakar_tech_wallet.Money(new BigDecimal("500"), "FCFA"));
+            dakar_tech_wallet.Money montantTente = new dakar_tech_wallet.Money(new BigDecimal("1000"), "FCFA");
+            print("Solde avant debit", petitCompte.getBalance());
+            print("Montant tente pour debit", montantTente);
+            petitCompte.debiter(montantTente);
+            // si le debit passe (ce ne devrait pas), afficher le solde apres
+            print("Solde apres debit", petitCompte.getBalance());
+        });
     }
 
     /**
