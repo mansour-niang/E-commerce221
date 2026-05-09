@@ -39,16 +39,16 @@ public class Main {
         Money  prixDepart   = new Money(new BigDecimal("150000"), "FCFA");
         Product telephone   = new Product(skuTelephone, "Smartphone Galaxy X10", prixDepart);
 
-        System.out.println("✅ Produit créé : " + telephone);
+        System.out.println("Produit créé : " + telephone);
 
         // Remise de 10%
         telephone.applyDiscount(new BigDecimal("10"));
-        System.out.println("✅ Après remise de 10% : " + telephone.getPrice());
+        System.out.println("Après remise de 10% : " + telephone.getPrice());
 
         // Addition de deux Money de même devise
         Money frais     = new Money(new BigDecimal("5000"), "FCFA");
         Money total     = prixDepart.add(frais);
-        System.out.println("✅ Addition FCFA + FCFA : " + total);
+        System.out.println("Addition FCFA + FCFA : " + total);
 
         System.out.println();
 
@@ -158,19 +158,19 @@ public class Main {
         System.out.println("─── 6. Immutabilité de Product ────────────────────────");
 
         Product produitFige = new Product(new SKU("ORD-2024"), "Ordinateur Pro", new Money(new BigDecimal("500000"), "FCFA"));
-        System.out.println("✅ Produit avant toute tentative : " + produitFige);
+        System.out.println("Produit avant toute tentative : " + produitFige);
 
         // Il n'existe aucun setter : le code suivant ne compile même pas.
         // produitFige.setPrice(...);  ← ERREUR DE COMPILATION
         // produitFige.setName(...);   ← ERREUR DE COMPILATION
         // produitFige.setId(...);     ← ERREUR DE COMPILATION
-        System.out.println("✅ Aucun setter disponible : impossible de modifier id, sku, name ou price depuis l'extérieur.");
-        System.out.println("✅ Le seul moyen de changer le prix est applyDiscount(), qui valide le pourcentage.");
+        System.out.println("Aucun setter disponible : impossible de modifier id, sku, name ou price depuis l'extérieur.");
+        System.out.println("Le seul moyen de changer le prix est applyDiscount(), qui valide le pourcentage.");
 
         // Money est un record → immuable par nature. add() retourne un NOUVEAU Money, n'altère pas l'original.
         Money original = produitFige.getPrice();
         original.add(new Money(new BigDecimal("99999"), "FCFA")); // retourne un nouveau Money, original intact
-        System.out.println("✅ Money.add() retourne un nouvel objet, le prix du produit est inchangé : " + produitFige.getPrice());
+        System.out.println("Money.add() retourne un nouvel objet, le prix du produit est inchangé : " + produitFige.getPrice());
 
         System.out.println();
         System.out.println("═══════════════════════════════════════════════════════");
@@ -271,11 +271,11 @@ public class Main {
     private static void tester(String description, Runnable action) {
         try {
             action.run();
-            System.out.println("❌ [PROBLÈME] Aucune exception pour : " + description);
+            System.out.println(" [PROBLÈME] Aucune exception pour : " + description);
         } catch (InvalidCurrencyException | InvalidSkuException | InvalidDiscountException e) {
-            System.out.println("✅ [BLOQUÉ] " + description + " → " + e.getMessage());
+            System.out.println(" [BLOQUÉ] " + description + " → " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            System.out.println("✅ [BLOQUÉ] " + description + " → " + e.getMessage());
+            System.out.println("[BLOQUÉ] " + description + " → " + e.getMessage());
         }
     }
 
