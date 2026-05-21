@@ -29,10 +29,8 @@ public class Main {
         System.out.println("═══════════════════════════════════════════════════════");
         System.out.println("  DÉMONSTRATION DU MODULE CATALOGUE E-COMMERCE");
         System.out.println("═══════════════════════════════════════════════════════\n");
-
-        // ────────────────────────────────────────────────────────────────────────
         // 1. CAS VALIDES : création normale d'un produit
-        // ────────────────────────────────────────────────────────────────────────
+
         System.out.println("─── 1. Création de produits valides ───────────────────");
 
         SKU    skuTelephone = new SKU("TEL-10001");
@@ -52,9 +50,8 @@ public class Main {
 
         System.out.println();
 
-        // ────────────────────────────────────────────────────────────────────────
         // 2. TENTATIVES INVALIDES SUR Money
-        // ────────────────────────────────────────────────────────────────────────
+
         System.out.println("─── 2. Money : tests des gardes-fous ──────────────────");
 
         tester("Montant négatif", () ->
@@ -271,9 +268,9 @@ public class Main {
     private static void tester(String description, Runnable action) {
         try {
             action.run();
-            System.out.println(" [PROBLÈME] Aucune exception pour : " + description);
+            System.out.println("[PROBLÈME] Aucune exception pour : " + description);
         } catch (InvalidCurrencyException | InvalidSkuException | InvalidDiscountException e) {
-            System.out.println(" [BLOQUÉ] " + description + " → " + e.getMessage());
+            System.out.println("[BLOQUÉ]" + description + " → " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.out.println("[BLOQUÉ] " + description + " → " + e.getMessage());
         }
